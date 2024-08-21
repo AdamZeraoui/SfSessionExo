@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ModulRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ModulRepository::class)]
@@ -17,7 +19,18 @@ class Modul
     private ?string $nomModul = null;
 
     #[ORM\ManyToOne(inversedBy: 'modul')]
-    private ?Categorie $categorie = null;
+    private ?Categorie $categories = null;
+
+    /**
+     * @var Collection<int, Programm>
+     */
+    #[ORM\OneToMany(targetEntity: Programm::class, mappedBy: 'modul')]
+    private Collection $programms;
+
+    public function __construct()
+    {
+        $this->programms = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -36,14 +49,44 @@ class Modul
         return $this;
     }
 
-    public function getCategorie(): ?Categorie
+    public function getCategories(): ?Categorie
     {
-        return $this->categorie;
+        return $this->categories;
     }
 
-    public function setCategorie(?Categorie $categorie): static
+    public function setCategories(?Categorie $categories): static
     {
-        $this->categorie = $categorie;
+        $this->categories = $categories;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Programm>
+     */
+    public function getProgramms(): Collection
+    {
+        return $this->programms;
+    }
+
+    public function addProgramm(Programm $programm): static
+    {
+        if (!$this->programms->contains($programm)) {
+            $this->programms->add($programm);
+            $programm->setModul($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProgramm(Programm $programm): static
+    {
+        if ($this->programms->removeElement($programm)) {
+            // set the owning side to null (unless already changed)
+            if ($programm->getModul() === $this) {
+                $programm->setModul(null);
+            }
+        }
 
         return $this;
     }

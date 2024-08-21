@@ -21,12 +21,12 @@ class Categorie
     /**
      * @var Collection<int, Modul>
      */
-    #[ORM\OneToMany(targetEntity: Modul::class, mappedBy: 'categorie')]
-    private Collection $modul;
+    #[ORM\OneToMany(targetEntity: Modul::class, mappedBy: 'categories')]
+    private Collection $moduls;
 
     public function __construct()
     {
-        $this->modul = new ArrayCollection();
+        $this->moduls = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,25 +51,25 @@ class Categorie
      */
     public function getModul(): Collection
     {
-        return $this->modul;
+        return $this->moduls;
     }
 
-    public function addModul(Modul $modul): static
+    public function addModul(Modul $moduls): static
     {
-        if (!$this->modul->contains($modul)) {
-            $this->modul->add($modul);
-            $modul->setCategorie($this);
+        if (!$this->moduls->contains($moduls)) {
+            $this->moduls->add($moduls);
+            $moduls->setCategories($this);
         }
 
         return $this;
     }
 
-    public function removeModul(Modul $modul): static
+    public function removeModul(Modul $moduls): static
     {
-        if ($this->modul->removeElement($modul)) {
+        if ($this->moduls->removeElement($moduls)) {
             // set the owning side to null (unless already changed)
-            if ($modul->getCategorie() === $this) {
-                $modul->setCategorie(null);
+            if ($moduls->getCategories() === $this) {
+                $moduls->setCategories(null);
             }
         }
 
